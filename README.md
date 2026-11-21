@@ -111,13 +111,6 @@ Copie o arquivo de exemplo:
 cp .env.example .env.local
 ```
 
-Conteúdo de `.env.local`:
-```env
-NEXT_PUBLIC_RAWG_KEY=b839705fc6404b13b54780739df24e63
-NEXT_PUBLIC_REQRES_BASE_URL=https://reqres.in/api
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_XKUpwPvvEnNxMsSzoLm8H3i8
-```
-
 ### 3. Rodar em Desenvolvimento
 ```bash
 npm run dev
