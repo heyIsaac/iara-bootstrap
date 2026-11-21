@@ -1,3 +1,5 @@
+![image](https://github.com/user-attachments/assets/482ae99f-2fec-43a0-a061-9cb255465f01)
+
 # 🎮 Iara Games - E-commerce de Jogos Digitais (Next.js + FSD)
 
 Plataforma completa de e-commerce de jogos digitais desenvolvida em **Next.js** com **TypeScript** e arquitetura **Feature-Sliced Design (FSD)**, seguindo estritamente as convenções de **kebab-case** e boas práticas de engenharia de software.
