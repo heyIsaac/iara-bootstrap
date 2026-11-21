@@ -1,0 +1,122 @@
+.registerForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-8);
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.sectionTitle {
+  font-size: var(--fs-lg);
+  color: var(--color-primary);
+  margin-bottom: var(--sp-3);
+  padding-bottom: var(--sp-2);
+  border-bottom: 2px solid rgba(204, 254, 44, 0.2);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.formGroup label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.formInput {
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-md);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  box-sizing: border-box;
+}
+
+.formInput::placeholder {
+  color: var(--color-muted);
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(204, 254, 44, 0.1);
+}
+
+.formInput.inputError {
+  border-color: var(--color-error);
+}
+
+.formInput.inputError:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(255, 45, 85, 0.1);
+}
+
+.errorMessage {
+  font-size: var(--fs-sm);
+  color: var(--color-error);
+  margin-top: var(--sp-1);
+}
+
+.textInfo {
+  font-size: var(--fs-xs);
+  color: var(--color-primary);
+  margin-top: var(--sp-1);
+  font-style: italic;
+}
+
+.globalError {
+  background: rgba(255, 45, 85, 0.1);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4);
+  color: var(--color-error);
+  text-align: center;
+  font-size: var(--fs-sm);
+}
+
+.authHint {
+  margin-top: var(--sp-6);
+  padding: var(--sp-4);
+  background: rgba(204, 254, 44, 0.05);
+  border: 1px solid rgba(204, 254, 44, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.hintTitle {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--sp-2);
+}
+
+.hintText {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.hintText strong {
+  color: var(--color-text);
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}

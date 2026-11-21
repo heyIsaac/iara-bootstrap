@@ -1,36 +1,4 @@
 {
-  "buildCommand": "cd app && NODE_OPTIONS='--max-old-space-size=4096' npm run build",
-  "devCommand": "cd app && npm start",
-  "installCommand": "cd app && npm install",
-  "outputDirectory": "app/build",
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/landing/(.*)",
-      "dest": "/landing/$1"
-    },
-    {
-      "src": "/(favicon.ico|logo.*\\.png|manifest.json|robots.txt)",
-      "dest": "/$1"
-    },
-    {
-      "src": "/",
-      "dest": "/landing/index.html"
-    },
-    {
-      "src": "/(login|register|catalog|cart|checkout|orders|success|cancel)",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/game/(.*)",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/payment/(.*)",
-      "dest": "/index.html"
-    }
-  ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs"
 }

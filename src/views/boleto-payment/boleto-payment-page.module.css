@@ -1,0 +1,196 @@
+.boletoPage {
+  min-height: calc(100vh - 160px);
+  padding: var(--sp-8) 0;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--sp-8);
+}
+
+.icon {
+  color: var(--color-primary);
+  margin-bottom: var(--sp-4);
+  display: flex;
+  justify-content: center;
+}
+
+.header h1 {
+  font-size: var(--fs-3xl);
+  margin-bottom: var(--sp-2);
+  background: linear-gradient(to right, var(--color-primary), var(--color-yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header p {
+  color: var(--color-muted);
+  font-size: var(--fs-lg);
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-8);
+  margin-bottom: var(--sp-8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.value {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.valueHighlight {
+  color: var(--color-primary);
+  font-size: var(--fs-xl);
+}
+
+.divider {
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--color-primary), transparent);
+  margin: var(--sp-6) 0;
+}
+
+.digitableLineSection {
+  margin-bottom: var(--sp-8);
+}
+
+.digitableLineSection label,
+.barcodeSection label {
+  display: block;
+  color: var(--color-muted);
+  font-weight: 600;
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lineContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  background: rgba(0, 0, 0, 0.4);
+  padding: var(--sp-4);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-primary);
+}
+
+.lineText {
+  flex: 1;
+  font-family: monospace;
+  font-size: var(--fs-md);
+  color: var(--color-text);
+  font-weight: 600;
+  letter-spacing: 1px;
+  word-break: break-all;
+}
+
+.barcodeSection {
+  margin-bottom: var(--sp-8);
+}
+
+.barcodeContainer {
+  display: flex;
+  justify-content: center;
+  background: white;
+  padding: var(--sp-6);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--sp-4);
+}
+
+.actions {
+  display: flex;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+
+.warning {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4);
+  text-align: center;
+  color: #ffc107;
+  font-size: var(--fs-sm);
+}
+
+.confirmSection {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-8);
+  text-align: center;
+  margin-bottom: var(--sp-8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.confirmIcon {
+  color: var(--color-success);
+  margin-bottom: var(--sp-4);
+  display: flex;
+  justify-content: center;
+}
+
+.confirmSection h2 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--sp-2);
+}
+
+.confirmSection p {
+  color: var(--color-muted);
+  margin-bottom: var(--sp-6);
+}
+
+.help {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.help h3 {
+  font-size: var(--fs-xl);
+  margin-bottom: var(--sp-4);
+}
+
+.help ol {
+  margin-left: var(--sp-6);
+  color: var(--color-muted);
+  line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+  .lineContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .actions {
+    flex-direction: column;
+  }
+}

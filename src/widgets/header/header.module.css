@@ -1,0 +1,358 @@
+.navBar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  backdrop-filter: blur(24px);
+  background-color: rgba(46, 46, 46, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.paddingGlobal {
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+.navContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.navWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  min-height: 72px;
+}
+
+.navLogoWrapper {
+  flex-shrink: 0;
+  z-index: 101;
+}
+
+.navBrandLogo {
+  width: 52px;
+  height: 52px;
+  display: block;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.navBrandLogo:hover {
+  transform: scale(1.08);
+}
+
+.navRightSection {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navUtilityWrapper {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.navLink {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.navLink:hover {
+  color: var(--color-primary);
+}
+
+.navUtilityLink {
+  position: relative;
+  color: var(--color-white);
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.navUtilityLink:hover {
+  color: var(--color-primary);
+}
+
+.cartLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cartCounter {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--color-primary);
+  color: var(--color-black);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1;
+}
+
+.navUserSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userProfilePhoto {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border: 2px solid var(--color-primary);
+}
+
+.userProfilePhoto:hover {
+  transform: scale(1.05);
+  border-color: var(--color-yellow);
+}
+
+.logoutBtn {
+  padding: 8px 18px;
+  background: transparent;
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logoutBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.navAuthButtons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.navAuthBtn {
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--color-white);
+  background: transparent;
+}
+
+.navAuthBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.navAuthBtnPrimary {
+  background: var(--color-primary);
+  color: var(--color-black);
+  border-color: var(--color-primary);
+}
+
+.navAuthBtnPrimary:hover {
+  background: var(--color-yellow);
+  border-color: var(--color-yellow);
+  transform: translateY(-2px);
+}
+
+.hamburgerBtn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-white);
+  cursor: pointer;
+  padding: 8px;
+  transition: color 0.2s ease;
+  z-index: 101;
+}
+
+.hamburgerBtn:hover {
+  color: var(--color-primary);
+}
+
+/* Mobile Menu */
+.mobileMenuOverlay {
+  display: block;
+  position: fixed;
+  top: 72px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 99;
+  animation: fadeIn 0.3s ease;
+}
+
+.mobileMenu {
+  background: #1e1e1e;
+  border-radius: 0 0 24px 24px;
+  padding: 24px;
+  max-height: calc(100vh - 72px);
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.mobileMenuUser {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(204, 254, 44, 0.05);
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.mobileUserPhoto {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  object-fit: cover;
+}
+
+.mobileUserEmail {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.mobileMenuItems {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.mobileMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: 12px;
+  color: var(--color-white);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  width: 100%;
+  text-align: left;
+}
+
+.mobileMenuItem:hover {
+  background: rgba(204, 254, 44, 0.1);
+  color: var(--color-primary);
+}
+
+.mobileCartBadge {
+  position: absolute;
+  right: 16px;
+  background: var(--color-primary);
+  color: var(--color-black);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 10px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.mobileMenuFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobileLogoutBtn {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 45, 85, 0.1);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobileLogoutBtn:hover {
+  background: var(--color-error);
+  color: white;
+}
+
+.mobileAuthBtn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: var(--color-white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobileAuthBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.mobileAuthBtnPrimary {
+  background: var(--color-primary);
+  color: var(--color-black);
+  border-color: var(--color-primary);
+}
+
+.mobileAuthBtnPrimary:hover {
+  background: var(--color-yellow);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .navRightSection {
+    display: none;
+  }
+
+  .hamburgerBtn {
+    display: block;
+  }
+}

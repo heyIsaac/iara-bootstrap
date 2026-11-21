@@ -1,0 +1,141 @@
+.featuredSection {
+  padding: 80px 0;
+  background: #0f121a;
+  position: relative;
+}
+
+.promoContainer {
+  background: linear-gradient(135deg, rgba(204, 254, 44, 0.08) 0%, rgba(44, 122, 254, 0.05) 100%);
+  border: 1px solid rgba(204, 254, 44, 0.2);
+  border-radius: var(--radius-xl);
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 80px;
+}
+
+.promoTitle {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 16px;
+}
+
+.promoText {
+  color: var(--color-muted);
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.promoImages {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.promoImageCard {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+}
+
+.promoImageCard:hover {
+  transform: translateY(-8px) scale(1.03);
+}
+
+.promoImageCard img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Indies Section */
+.indiesHeader {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.indiesTitle {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  margin-bottom: 12px;
+  background: linear-gradient(to right, var(--color-primary), var(--color-yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.indiesSubtitle {
+  color: var(--color-muted);
+  font-size: 18px;
+}
+
+.indiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.indieCard {
+  background: var(--color-surface);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.indieCard:hover {
+  transform: translateY(-6px);
+  border-color: var(--color-primary);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.indieCover {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.indieBody {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.indieName {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.indieBadge {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(204, 254, 44, 0.15);
+  color: var(--color-primary);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.centerCta {
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .promoContainer {
+    grid-template-columns: 1fr;
+    padding: 32px 20px;
+  }
+
+  .promoImages {
+    flex-direction: column;
+  }
+}

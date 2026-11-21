@@ -14,9 +14,11 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 
-# Arquivos de build
-dist/
+# Next.js & Builds
+.next/
+out/
 build/
+dist/
 *.log
 
 # Arquivos de ambiente
@@ -24,11 +26,5 @@ build/
 .env.local
 .env.*.local
 
-# Documentação (exceto README.md principal)
-DOCUMENTACAO_COMPLETA.md
-SISTEMA_COMPLETO.md
-MELHORIAS_UI.md
-IMPLEMENTACAO.md
-QUICK_START.md
-TYPOGRAPHY.md 
+# Vercel
 .vercel
