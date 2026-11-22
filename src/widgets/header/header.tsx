@@ -2,27 +2,35 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
+  House,
+  GameController,
   Bell,
   ShoppingCart,
   List,
   X,
   Package,
-  GameController,
 } from '@phosphor-icons/react';
 import { useAuth } from '@/entities/user';
 import { useCart } from '@/entities/cart';
 import { ROUTES } from '@/shared/config';
-import styles from './header.module.css';
+import { Badge } from '@/shared/ui';
 
 export const Header: React.FC = () => {
   const { isAuthenticated, logout } = useAuth();
   const { totalItems } = useCart();
   const router = useRouter();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  const isHome = pathname === '/' || pathname === ROUTES.home;
+  const isCatalog = pathname.startsWith('/catalog') || pathname.startsWith('/game');
+  const isOrders = pathname.startsWith('/orders');
 
   useEffect(() => {
+    setMounted(true);
     const handleResize = () => {
       if (window.innerWidth > 768) {
         setMenuOpen(false);
@@ -51,101 +59,125 @@ export const Header: React.FC = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
-    <nav className={styles.navBar} role="navigation" aria-label="Navegação principal">
-      <div className={styles.paddingGlobal}>
-        <div className={styles.navContainer}>
-          <div className={styles.navWrapper}>
-            {/* Logo */}
-            <div className={styles.navLogoWrapper}>
-              <Link href={ROUTES.home} aria-label="Página inicial da Iara Games">
-                <svg
-                  className={styles.navBrandLogo}
-                  viewBox="0 0 132 132"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  aria-label="Iara Games"
-                >
-                  <path
-                    d="M102.11 0H29.89C13.3822 0 0 13.3822 0 29.89V102.11C0 118.618 13.3822 132 29.89 132H102.11C118.618 132 132 118.618 132 102.11V29.89C132 13.3822 118.618 0 102.11 0Z"
-                    fill="#CCFE2D"
-                  />
-                  <path
-                    d="M80.83 47.6299L75.73 93.1199C75.64 93.9299 76.35 94.5999 77.15 94.4599L89.15 92.4299C90.18 92.2599 90.95 93.3799 90.4 94.2699L82 108.16C81.85 108.4 81.63 108.58 81.36 108.68L59.91 116.35C59.51 116.49 59.06 116.42 58.73 116.15L52.97 111.55C52.78 111.4 52.65 111.2 52.57 110.98L52.55 110.91C52.5 110.74 52.48 110.57 52.5 110.4L57.14 66.7799C57.23 65.9499 56.48 65.2799 55.67 65.4499L43 68.1299C41.95 68.3499 41.14 67.2099 41.7 66.2899L47.99 56.0799C48.15 55.8299 48.39 55.6399 48.68 55.5499L79.25 46.3199C80.09 46.0699 80.92 46.7599 80.82 47.6299H80.83Z"
-                    fill="black"
-                  />
-                  <path
-                    d="M70.99 40.68L59.59 43.73C59.16 43.84 58.71 43.73 58.4 43.41L50.18 35.05C49.83 34.69 49.73 34.15 49.94 33.69L53.41 26C53.56 25.66 53.85 25.42 54.21 25.32L71.4 20.72C71.6 20.67 71.82 20.66 72.02 20.72C72.25 20.78 72.46 20.9 72.62 21.08L76.69 25.54C77 25.88 77.1 26.38 76.93 26.81L71.83 39.96C71.69 40.32 71.38 40.6 71 40.7L70.99 40.68Z"
-                    fill="black"
-                  />
-                </svg>
+    <nav
+      className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#121212]/80 backdrop-blur-xl"
+      role="navigation"
+      aria-label="Navegação principal"
+    >
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative flex h-20 items-center justify-between">
+          {/* Left Navigation: Home & Game Store */}
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link
+              href={ROUTES.home}
+              className={`flex items-center gap-2 text-sm font-bold transition-all hover:text-primary hover:drop-shadow-[0_0_8px_rgba(204,254,44,0.4)] ${
+                isHome ? 'text-primary drop-shadow-[0_0_8px_rgba(204,254,44,0.3)]' : 'text-muted-foreground'
+              }`}
+            >
+              <House size={20} weight={isHome ? 'fill' : 'bold'} className={isHome ? 'text-primary' : 'text-muted-foreground'} />
+              <span className="hidden sm:inline">Home</span>
+            </Link>
+
+            <Link
+              href={ROUTES.catalog}
+              className={`flex items-center gap-2 text-sm font-bold transition-all hover:text-primary hover:drop-shadow-[0_0_8px_rgba(204,254,44,0.4)] ${
+                isCatalog ? 'text-primary drop-shadow-[0_0_8px_rgba(204,254,44,0.3)]' : 'text-muted-foreground'
+              }`}
+            >
+              <GameController size={20} weight={isCatalog ? 'fill' : 'bold'} className={isCatalog ? 'text-primary' : 'text-muted-foreground'} />
+              <span className="hidden sm:inline">Game Store</span>
+            </Link>
+
+            {mounted && isAuthenticated && (
+              <Link
+                href={ROUTES.orders}
+                className={`hidden lg:flex items-center gap-2 text-sm font-bold transition-all hover:text-primary hover:drop-shadow-[0_0_8px_rgba(204,254,44,0.4)] ${
+                  isOrders ? 'text-primary drop-shadow-[0_0_8px_rgba(204,254,44,0.3)]' : 'text-muted-foreground'
+                }`}
+              >
+                <Package size={20} weight={isOrders ? 'fill' : 'bold'} className={isOrders ? 'text-primary' : 'text-muted-foreground'} />
+                <span>Meus Pedidos</span>
               </Link>
+            )}
+          </div>
+
+          {/* Center Brand Logo (Icon 'i' as in Figma) */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <Link href={ROUTES.home} aria-label="Página inicial da Iara Games" className="flex items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/assets/brand/iara_games-icon.svg"
+                alt="Iara Games"
+                className="h-11 w-11 transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_12px_rgba(204,254,44,0.6)]"
+              />
+            </Link>
+          </div>
+
+          {/* Right Navigation: Utilities & User */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <button
+              type="button"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-primary"
+              aria-label="Notificações"
+            >
+              <Bell size={22} weight="bold" />
+            </button>
+
+            <Link
+              href={ROUTES.cart}
+              className="relative flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-primary"
+              aria-label={`Carrinho com ${totalItems} itens`}
+            >
+              <ShoppingCart size={22} weight="bold" />
+              {totalItems > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-black text-black shadow-[0_0_10px_rgba(204,254,44,0.5)]">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+
+            {/* Coin Balance Badge (as in Figma) */}
+            <div className="hidden md:flex items-center gap-2 rounded-full border border-white/10 bg-[#121212] px-3.5 py-1.5 shadow-[4px_4px_7px_rgba(0,0,0,0.26)] transition-all hover:border-primary/50 hover:shadow-[0_0_15px_rgba(204,254,44,0.2)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/assets/coin-badge.svg" alt="Coins" className="h-5 w-5" />
+              <span className="text-xs font-bold text-primary">5000 IC</span>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className={styles.navRightSection}>
-              <div className={styles.navUtilityWrapper}>
-                <Link href={ROUTES.catalog} className={styles.navLink}>
-                  Game Store
-                </Link>
-                {isAuthenticated && (
-                  <Link href={ROUTES.orders} className={styles.navLink}>
-                    Meus Pedidos
-                  </Link>
-                )}
-                <button
-                  className={styles.navUtilityLink}
-                  aria-label="Notificações"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <Bell size={24} weight="fill" />
-                </button>
-                <Link
-                  href={ROUTES.cart}
-                  className={`${styles.navUtilityLink} ${styles.cartLink}`}
-                  aria-label={`Carrinho com ${totalItems} itens`}
-                >
-                  <ShoppingCart size={24} weight="fill" />
-                  {totalItems > 0 && (
-                    <span className={styles.cartCounter}>{totalItems}</span>
-                  )}
-                </Link>
-              </div>
-
-              {isAuthenticated ? (
-                <div className={styles.navUserSection}>
+            {/* Profile Avatar / Login Button */}
+            {mounted && isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                <Link href={ROUTES.orders} title="Ver Meus Pedidos">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    className={styles.userProfilePhoto}
+                    className="h-9 w-9 rounded-full border-2 border-primary/50 object-cover transition-transform hover:scale-105 hover:border-primary"
                     src="/foto-perfil.webp"
                     alt="Foto de perfil"
                   />
-                  <button onClick={handleLogout} className={styles.logoutBtn}>
-                    Sair
-                  </button>
-                </div>
-              ) : (
-                <div className={styles.navAuthButtons}>
-                  <Link href={ROUTES.login} className={styles.navAuthBtn}>
-                    Login
-                  </Link>
-                  <Link
-                    href={ROUTES.register}
-                    className={`${styles.navAuthBtn} ${styles.navAuthBtnPrimary}`}
-                  >
-                    Cadastrar
-                  </Link>
-                </div>
-              )}
-            </div>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="hidden text-xs font-semibold text-muted-foreground hover:text-destructive sm:inline"
+                >
+                  Sair
+                </button>
+              </div>
+            ) : mounted ? (
+              <Link
+                href={ROUTES.login}
+                className="hidden rounded-full bg-primary px-4 py-1.5 text-xs font-bold text-black transition-all hover:bg-[#b8eb23] hover:scale-105 sm:inline-block"
+              >
+                Entrar
+              </Link>
+            ) : null}
 
-            {/* Hamburger Button */}
+            {/* Mobile Menu Toggle */}
             <button
-              className={styles.hamburgerBtn}
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground md:hidden"
               onClick={toggleMenu}
               aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
               aria-expanded={menuOpen}
             >
-              {menuOpen ? <X size={32} /> : <List size={32} />}
+              {menuOpen ? <X size={24} /> : <List size={24} />}
             </button>
           </div>
         </div>
@@ -153,77 +185,115 @@ export const Header: React.FC = () => {
 
       {/* Mobile Drawer */}
       {menuOpen && (
-        <div className={styles.mobileMenuOverlay} onClick={closeMenu}>
-          <div className={styles.mobileMenu} onClick={(e) => e.stopPropagation()}>
-            {isAuthenticated && (
-              <div className={styles.mobileMenuUser}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  className={styles.mobileUserPhoto}
-                  src="/foto-perfil.webp"
-                  alt="Foto de perfil"
-                />
-                <span className={styles.mobileUserEmail}>Bem-vindo!</span>
-              </div>
-            )}
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm md:hidden"
+          onClick={closeMenu}
+        >
+          <div
+            className="fixed right-0 top-0 h-full w-[280px] border-l border-white/10 bg-card p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-white/5 pb-4">
+              <span className="text-lg font-black tracking-wider text-foreground">
+                IARA<span className="text-primary">GAMES</span>
+              </span>
+              <button
+                onClick={closeMenu}
+                className="rounded-lg p-1 text-muted-foreground hover:bg-white/5"
+              >
+                <X size={24} />
+              </button>
+            </div>
 
-            <div className={styles.mobileMenuItems}>
+            {/* User Profile in Drawer */}
+            {mounted && isAuthenticated ? (
+              <div className="mt-4 flex items-center justify-between rounded-lg bg-black/30 p-3">
+                <div className="flex items-center gap-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    className="h-10 w-10 rounded-full border border-primary/40 object-cover"
+                    src="/foto-perfil.webp"
+                    alt="Foto de perfil"
+                  />
+                  <div>
+                    <span className="block text-xs font-semibold text-foreground">Gamer Conectado</span>
+                    <span className="text-[10px] text-primary">5000 IC</span>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            <div className="mt-6 space-y-2">
               <Link
-                href={ROUTES.catalog}
-                className={styles.mobileMenuItem}
+                href={ROUTES.home}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-white/5 ${
+                  isHome ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-primary'
+                }`}
                 onClick={closeMenu}
               >
-                <GameController size={24} weight="fill" />
-                <span>Catálogo de Jogos</span>
+                <House size={20} weight={isHome ? 'fill' : 'bold'} />
+                <span>Home</span>
+              </Link>
+
+              <Link
+                href={ROUTES.catalog}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-white/5 ${
+                  isCatalog ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-primary'
+                }`}
+                onClick={closeMenu}
+              >
+                <GameController size={20} weight={isCatalog ? 'fill' : 'bold'} />
+                <span>Game Store</span>
               </Link>
 
               <Link
                 href={ROUTES.cart}
-                className={styles.mobileMenuItem}
+                className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-white/5 hover:text-primary"
                 onClick={closeMenu}
               >
-                <ShoppingCart size={24} weight="fill" />
-                <span>Carrinho</span>
-                {totalItems > 0 && (
-                  <span className={styles.mobileCartBadge}>{totalItems}</span>
-                )}
+                <div className="flex items-center gap-3">
+                  <ShoppingCart size={20} weight="fill" />
+                  <span>Carrinho</span>
+                </div>
+                {totalItems > 0 && <Badge variant="neon">{totalItems}</Badge>}
               </Link>
 
-              {isAuthenticated && (
+              {mounted && isAuthenticated && (
                 <Link
                   href={ROUTES.orders}
-                  className={styles.mobileMenuItem}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-white/5 ${
+                    isOrders ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-primary'
+                  }`}
                   onClick={closeMenu}
                 >
-                  <Package size={24} weight="fill" />
+                  <Package size={20} weight={isOrders ? 'fill' : 'bold'} />
                   <span>Meus Pedidos</span>
                 </Link>
               )}
             </div>
 
-            <div className={styles.mobileMenuFooter}>
-              {isAuthenticated ? (
-                <button onClick={handleLogout} className={styles.mobileLogoutBtn}>
+            <div className="absolute bottom-6 left-6 right-6 border-t border-white/5 pt-4">
+              {mounted && isAuthenticated ? (
+                <button
+                  onClick={handleLogout}
+                  className="w-full rounded-lg border border-destructive/30 py-2.5 text-sm font-bold text-destructive transition-colors hover:bg-destructive/10"
+                >
                   Sair da Conta
                 </button>
-              ) : (
-                <>
-                  <Link
-                    href={ROUTES.login}
-                    className={styles.mobileAuthBtn}
-                    onClick={closeMenu}
-                  >
-                    Login
+              ) : mounted ? (
+                <div className="space-y-2">
+                  <Link href={ROUTES.login} className="block" onClick={closeMenu}>
+                    <button className="w-full rounded-lg border border-white/10 py-2.5 text-sm font-bold text-foreground hover:bg-white/5">
+                      Entrar
+                    </button>
                   </Link>
-                  <Link
-                    href={ROUTES.register}
-                    className={`${styles.mobileAuthBtn} ${styles.mobileAuthBtnPrimary}`}
-                    onClick={closeMenu}
-                  >
-                    Cadastrar
+                  <Link href={ROUTES.register} className="block" onClick={closeMenu}>
+                    <button className="w-full rounded-lg bg-primary py-2.5 text-sm font-black uppercase text-black hover:bg-[#b8eb23]">
+                      Criar Conta
+                    </button>
                   </Link>
-                </>
-              )}
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

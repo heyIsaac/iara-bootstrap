@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { Copy, Check } from '@phosphor-icons/react';
-import styles from './copy-button.module.css';
+import { Button } from '@/shared/ui';
+import { cn } from '@/shared/lib/cn';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -15,7 +16,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
   textToCopy,
   label = 'Copiar',
   copiedLabel = 'Copiado!',
-  className = '',
+  className,
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -31,14 +32,15 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
   };
 
   return (
-    <button
+    <Button
       type="button"
       onClick={handleCopy}
-      className={`${styles.copyBtn} ${copied ? styles.copied : ''} ${className}`.trim()}
+      variant={copied ? 'default' : 'outline'}
+      className={cn('gap-2 font-semibold transition-all', className)}
       aria-label={copied ? copiedLabel : label}
     >
       {copied ? <Check size={18} weight="bold" /> : <Copy size={18} />}
       <span>{copied ? copiedLabel : label}</span>
-    </button>
+    </Button>
   );
 };

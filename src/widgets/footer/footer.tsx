@@ -3,54 +3,75 @@
 import React from 'react';
 import Link from 'next/link';
 import { ROUTES } from '@/shared/config';
-import styles from './footer.module.css';
+import { Container } from '@/shared/ui';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className={styles.footer} role="contentinfo">
-      <div className={styles.paddingGlobal}>
-        <div className={styles.container}>
-          <div className={styles.content}>
+    <footer
+      className="relative mt-28 rounded-t-[40px] bg-[#CCFE2C] pb-8 pt-16 text-black sm:rounded-t-[48px]"
+      role="contentinfo"
+    >
+      <Container>
+        {/* Central Card with Corner Brackets (as in Figma) */}
+        <div className="relative mx-auto flex max-w-2xl flex-col items-center p-8 text-center sm:p-12">
+          {/* 4 Corner Brackets */}
+          <div
+            className="pointer-events-none absolute left-0 top-0 h-8 w-8 border-l-2 border-t-2 border-black sm:h-10 sm:w-10"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute right-0 top-0 h-8 w-8 border-r-2 border-t-2 border-black sm:h-10 sm:w-10"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute bottom-0 left-0 h-8 w-8 border-b-2 border-l-2 border-black sm:h-10 sm:w-10"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute bottom-0 right-0 h-8 w-8 border-b-2 border-r-2 border-black sm:h-10 sm:w-10"
+            aria-hidden="true"
+          />
+
+          {/* Logo Horizontal Black */}
+          <div className="mb-4">
             <Link href={ROUTES.home}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/assets/brand/iara_games-logo-horizontal-black.svg"
-                alt="Logotipo da Iara Games"
-                className={styles.logo}
+                alt="Iara Games"
+                className="h-12 sm:h-16 w-auto"
               />
             </Link>
-
-            <nav className={styles.links} aria-label="Links do rodapé">
-              <Link href={ROUTES.home} className={styles.link}>
-                Início
-              </Link>
-              <Link href={ROUTES.catalog} className={styles.link}>
-                Game Store
-              </Link>
-              <Link href={ROUTES.cart} className={styles.link}>
-                Carrinho
-              </Link>
-              <Link href={ROUTES.login} className={styles.link}>
-                Login
-              </Link>
-              <Link href={ROUTES.register} className={styles.link}>
-                Cadastrar
-              </Link>
-            </nav>
-
-            <p className={styles.tagline}>
-              Feito com ❤️ para a cultura brasileira
-            </p>
-
-            <div className={styles.divider} aria-hidden="true" />
-
-            <div className={styles.bottom}>
-              <p>© 2025 IARA GAMES™ // Todos os direitos reservados</p>
-              <p>E-commerce de Jogos Digitais com Arquitetura FSD e Next.js</p>
-            </div>
           </div>
+
+          {/* Nav links */}
+          <nav className="mb-3 flex flex-wrap justify-center gap-6 text-sm font-bold text-black" aria-label="Links do rodapé">
+            <Link href={ROUTES.catalog} className="transition-opacity hover:opacity-75">
+              Game Store
+            </Link>
+            <Link href={ROUTES.home} className="transition-opacity hover:opacity-75">
+              Home
+            </Link>
+            <Link href={ROUTES.cart} className="transition-opacity hover:opacity-75">
+              Carrinho
+            </Link>
+          </nav>
+
+          {/* Tagline */}
+          <p className="text-xs font-semibold text-black/80">
+            Feito com ❤️ para a cultura brasileira
+          </p>
         </div>
-      </div>
+
+        {/* Dotted Divider Line */}
+        <div className="my-8 mx-auto w-full max-w-4xl border-t-2 border-dotted border-black/30" aria-hidden="true" />
+
+        {/* Footer Bottom Info */}
+        <div className="mx-auto flex max-w-4xl flex-col items-center justify-between gap-2 px-4 text-xs font-medium text-black/80 sm:flex-row">
+          <p>©2025 IARA GAMES™ // Todos direitos reservados</p>
+          <p>Website by FIAP.</p>
+        </div>
+      </Container>
     </footer>
   );
 };

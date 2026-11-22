@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { MagnifyingGlass } from '@phosphor-icons/react';
-import styles from './search-games-input.module.css';
 
 export interface SearchGamesInputProps {
   value?: string;
@@ -34,14 +33,17 @@ export const SearchGamesInput: React.FC<SearchGamesInputProps> = ({
   }, [internalValue, debounceMs, onSearch]);
 
   return (
-    <div className={styles.searchWrapper}>
-      <MagnifyingGlass size={20} className={styles.searchIcon} />
+    <div className="relative flex-1 min-w-[240px]">
+      <MagnifyingGlass
+        size={18}
+        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+      />
       <input
         type="search"
         value={internalValue}
         onChange={(e) => setInternalValue(e.target.value)}
         placeholder={placeholder}
-        className={styles.searchInput}
+        className="h-11 w-full rounded-lg border border-input bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         aria-label="Buscar jogos"
       />
     </div>

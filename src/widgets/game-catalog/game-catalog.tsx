@@ -6,7 +6,6 @@ import { GameCard, useGames } from '@/entities/game';
 import { AddToCartButton } from '@/features/add-to-cart';
 import { SearchGamesInput } from '@/features/search-games';
 import { OrderingSelect } from '@/features/filter-games';
-import styles from './game-catalog.module.css';
 
 export const GameCatalog: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,33 +31,44 @@ export const GameCatalog: React.FC = () => {
   };
 
   return (
-    <div className={styles.catalogWrapper}>
+    <div className="py-12 md:py-16">
       <Container>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Catálogo de Jogos</h1>
-          <p className={styles.subtitle}>
+        <div className="mb-8 text-center sm:text-left">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            Catálogo de Jogos
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground sm:text-base">
             Explore nossa biblioteca com milhares de jogos nacionais e internacionais
           </p>
         </div>
 
-        <div className={styles.filters}>
+        <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <SearchGamesInput onSearch={(val) => setSearchTerm(val)} />
           <OrderingSelect value={ordering} onChange={(val) => setOrdering(val)} />
         </div>
 
-        {loading && <Spinner label="Carregando jogos da RAWG API..." />}
+        {loading && (
+          <div className="flex min-h-[300px] flex-col items-center justify-center gap-4">
+            <Spinner size="lg" />
+            <span className="text-sm text-muted-foreground">Carregando jogos da RAWG API...</span>
+          </div>
+        )}
 
-        {error && <div className={styles.errorState}>{error}</div>}
+        {error && (
+          <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-6 text-center text-sm font-medium text-destructive">
+            {error}
+          </div>
+        )}
 
         {!loading && !error && games.length === 0 && (
-          <div className={styles.emptyState}>
-            <p>Nenhum jogo encontrado. Tente um termo de busca diferente.</p>
+          <div className="rounded-xl border border-white/5 bg-card/60 p-12 text-center text-muted-foreground">
+            <p className="text-base">Nenhum jogo encontrado. Tente um termo de busca diferente.</p>
           </div>
         )}
 
         {!loading && !error && games.length > 0 && (
           <>
-            <div className={styles.gamesGrid}>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {games.map((game) => {
                 const price = Math.round((game.rating * 10 + 20) * 100) / 100;
                 return (
@@ -86,11 +96,11 @@ export const GameCatalog: React.FC = () => {
               })}
             </div>
 
-            <div className={styles.pagination}>
+            <div className="mt-12 flex items-center justify-center gap-4">
               <Button onClick={prevPage} disabled={page === 1} variant="outline">
                 Anterior
               </Button>
-              <span className={styles.pageIndicator}>Página {page}</span>
+              <span className="text-sm font-semibold text-muted-foreground">Página {page}</span>
               <Button onClick={nextPage} disabled={!hasMore} variant="outline">
                 Próxima
               </Button>
@@ -98,10 +108,13 @@ export const GameCatalog: React.FC = () => {
           </>
         )}
 
+        {/* Toast Feedback */}
         {toastMessage && (
           <div
-            className={`${styles.toast} ${
-              !toastMessage.added ? styles.toastRemoved : ''
+            className={`fixed bottom-6 right-6 z-50 rounded-xl px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur-md transition-all ${
+              toastMessage.added
+                ? 'bg-primary text-primary-foreground shadow-[0_0_25px_rgba(204,254,44,0.4)]'
+                : 'bg-card text-foreground border border-white/10'
             }`}
           >
             {toastMessage.text}

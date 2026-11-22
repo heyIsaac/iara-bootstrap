@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { Barcode as BarcodeIcon, CheckCircle, Printer } from '@phosphor-icons/react';
-import { Container, Button, Spinner } from '@/shared/ui';
+import { Container, Button, Spinner, Card, CardContent } from '@/shared/ui';
 import { ROUTES } from '@/shared/config';
 import { Header } from '@/widgets/header';
 import { Footer } from '@/widgets/footer';
@@ -13,11 +13,11 @@ import { RouteGuard } from '@/features/route-guard';
 import {
   Order,
   getPendingOrder,
+  getOrdersHistory,
   saveOrderToHistory,
   clearPendingOrder,
 } from '@/entities/order';
 import { generateBoleto, GeneratedBoleto } from '@/entities/payment';
-import styles from './boleto-payment-page.module.css';
 
 // Dynamic import for react-barcode to prevent SSR mismatch
 const BarcodeDisplay = dynamic(() => import('react-barcode'), { ssr: false });
@@ -29,7 +29,14 @@ export const BoletoPaymentPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const pending = getPendingOrder();
+    let pending = getPendingOrder();
+    if (!pending) {
+      const history = getOrdersHistory();
+      const boletoPending = history.find((o) => o.paymentMethod === 'boleto' && !o.boletoPaid);
+      if (boletoPending) {
+        pending = boletoPending;
+      }
+    }
     if (!pending) {
       router.push(ROUTES.cart);
       return;
@@ -68,123 +75,107 @@ export const BoletoPaymentPage: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className={styles.boletoPage}>
+      <main className="flex-1 py-12">
         <RouteGuard>
-          <Container maxWidth="md">
+          <Container size="md">
             {loading || !order || !boletoData ? (
-              <Spinner label="Gerando Boleto Bancário..." />
+              <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
+                <Spinner size="lg" />
+                <span className="text-sm text-muted-foreground">Gerando Boleto Bancário...</span>
+              </div>
             ) : (
-              <>
-                <div className={styles.header}>
-                  <div className={styles.icon}>
-                    <BarcodeIcon size={48} weight="fill" />
+              <div className="mx-auto max-w-xl">
+                <div className="mb-8 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-[0_0_20px_rgba(204,254,44,0.2)]">
+                    <BarcodeIcon size={40} weight="fill" />
                   </div>
-                  <h1>Boleto Bancário</h1>
-                  <p>Copie a linha digitável ou imprima o boleto para pagamento</p>
+                  <h1 className="text-3xl font-extrabold text-foreground">Boleto Bancário</h1>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Copie a linha digitável ou imprima o boleto para pagamento
+                  </p>
                 </div>
 
-                <div className={styles.card}>
-                  <div className={styles.info}>
-                    <div className={styles.row}>
-                      <span className={styles.label}>Beneficiário:</span>
-                      <span className={styles.value}>{boletoData.recipient}</span>
+                <Card className="border-white/5 bg-card/90 shadow-2xl backdrop-blur-md">
+                  <CardContent className="space-y-6 p-6 sm:p-8">
+                    <div className="space-y-3 rounded-lg bg-black/20 p-4 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Beneficiário:</span>
+                        <span className="font-semibold text-foreground">{boletoData.recipient}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">CNPJ:</span>
+                        <span className="font-mono text-foreground">{boletoData.cnpj}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Pagador:</span>
+                        <span className="text-foreground">{boletoData.customerName}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Vencimento:</span>
+                        <span className="text-foreground">{boletoData.dueDate}</span>
+                      </div>
+                      <div className="flex justify-between border-t border-white/5 pt-2">
+                        <span className="text-muted-foreground">Valor:</span>
+                        <span className="text-lg font-bold text-primary">R$ {boletoData.value}</span>
+                      </div>
                     </div>
-                    <div className={styles.row}>
-                      <span className={styles.label}>CNPJ:</span>
-                      <span className={styles.value}>{boletoData.cnpj}</span>
-                    </div>
-                    <div className={styles.row}>
-                      <span className={styles.label}>Pagador:</span>
-                      <span className={styles.value}>{boletoData.customerName}</span>
-                    </div>
-                    <div className={styles.row}>
-                      <span className={styles.label}>CPF:</span>
-                      <span className={styles.value}>{boletoData.customerCpf}</span>
-                    </div>
-                    <div className={styles.row}>
-                      <span className={styles.label}>Valor do Documento:</span>
-                      <span className={`${styles.value} ${styles.valueHighlight}`}>
-                        R$ {boletoData.value}
+
+                    <div className="space-y-2">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Linha Digitável
                       </span>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          readOnly
+                          value={boletoData.digitableLine}
+                          className="h-10 flex-1 rounded-lg border border-input bg-black/40 px-3 font-mono text-xs text-muted-foreground focus:outline-none"
+                        />
+                        <CopyButton textToCopy={boletoData.digitableLine} />
+                      </div>
                     </div>
-                    <div className={styles.row}>
-                      <span className={styles.label}>Vencimento:</span>
-                      <span className={styles.value}>{boletoData.dueDate}</span>
-                    </div>
-                  </div>
 
-                  <div className={styles.divider} />
-
-                  <div className={styles.digitableLineSection}>
-                    <label>Linha Digitável (Código de Barras)</label>
-                    <div className={styles.lineContainer}>
-                      <span className={styles.lineText}>
-                        {boletoData.digitableLine}
-                      </span>
-                      <CopyButton
-                        textToCopy={boletoData.digitableLine}
-                        label="Copiar Linha"
-                      />
-                    </div>
-                  </div>
-
-                  <div className={styles.barcodeSection}>
-                    <label>Código de Barras</label>
-                    <div className={styles.barcodeContainer}>
+                    <div className="flex flex-col items-center justify-center overflow-x-auto rounded-xl border border-white/5 bg-white p-4">
                       <BarcodeDisplay
-                        value={boletoData.barcode}
+                        value={boletoData.barcode.replace(/\D/g, '').substring(0, 44)}
                         format="CODE128"
-                        width={2}
-                        height={80}
+                        width={1.6}
+                        height={55}
                         displayValue={false}
+                        background="#ffffff"
+                        lineColor="#000000"
                       />
                     </div>
-                  </div>
 
-                  <div className={styles.actions}>
-                    <Button variant="outline" fullWidth onClick={handlePrint}>
-                      <Printer size={20} /> Imprimir Boleto
-                    </Button>
-                  </div>
-
-                  <div className={styles.warning}>
-                    <p>
-                      ⚠️ O prazo de compensação do boleto é de até 3 dias úteis. Em
-                      ambiente de testes, clique em &quot;Confirmar Pagamento&quot; abaixo
-                      para simular a aprovação instantânea!
-                    </p>
-                  </div>
-                </div>
-
-                <div className={styles.confirmSection}>
-                  <div className={styles.confirmIcon}>
-                    <CheckCircle size={48} weight="fill" />
-                  </div>
-                  <h2>Já efetuou o pagamento?</h2>
-                  <p>Confirme o pagamento para liberar seus jogos</p>
-                  <Button size="lg" onClick={handlePaymentConfirmed}>
-                    <CheckCircle size={22} weight="fill" /> Já Paguei
-                  </Button>
-                </div>
-
-                <div className={styles.help}>
-                  <h3>Instruções de pagamento:</h3>
-                  <ol>
-                    <li>Acesse o Internet Banking ou aplicativo do seu banco</li>
-                    <li>Escolha a opção &quot;Pagar Boleto&quot;</li>
-                    <li>Escaneie o código de barras ou cole a linha digitável</li>
-                    <li>Confirme a operação</li>
-                    <li>Seus jogos serão liberados após a compensação bancária</li>
-                  </ol>
-                </div>
-              </>
+                    <div className="flex flex-col gap-3 border-t border-white/5 pt-6 sm:flex-row">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handlePrint}
+                        className="flex-1 gap-2"
+                      >
+                        <Printer size={20} />
+                        <span>Imprimir Boleto</span>
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={handlePaymentConfirmed}
+                        className="flex-1 gap-2 font-bold"
+                      >
+                        <CheckCircle size={20} weight="bold" />
+                        <span>Simular Pagamento</span>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             )}
           </Container>
         </RouteGuard>
       </main>
       <Footer />
-    </>
+    </div>
   );
 };

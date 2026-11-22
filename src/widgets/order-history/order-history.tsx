@@ -3,39 +3,66 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Package, Receipt, CreditCard } from '@phosphor-icons/react';
-import { Container, Button, Spinner } from '@/shared/ui';
+import { Container, Button, Spinner, Card, CardContent } from '@/shared/ui';
 import { ROUTES } from '@/shared/config';
 import { formatCurrency } from '@/shared/lib/formatters';
 import { Order, OrderCard, getOrdersHistory } from '@/entities/order';
-import styles from './order-history.module.css';
 
 export const OrderHistory: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setOrders(getOrdersHistory());
-    setLoading(false);
+    const loadOrders = () => {
+      setOrders(getOrdersHistory());
+      setLoading(false);
+    };
+
+    loadOrders();
+    window.addEventListener('orderHistoryUpdated', loadOrders);
+    window.addEventListener('storage', loadOrders);
+
+    return () => {
+      window.removeEventListener('orderHistoryUpdated', loadOrders);
+      window.removeEventListener('storage', loadOrders);
+    };
   }, []);
 
   if (loading) {
-    return <Spinner label="Carregando pedidos..." />;
+    return (
+      <Container className="py-20">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <Spinner size="lg" />
+          <span className="text-sm text-muted-foreground">Carregando pedidos...</span>
+        </div>
+      </Container>
+    );
   }
 
   if (orders.length === 0) {
     return (
-      <div className={styles.ordersPage}>
+      <div className="py-20">
         <Container>
-          <div className={styles.emptyOrders}>
-            <div className={styles.emptyIcon}>
-              <Package size={100} weight="fill" />
-            </div>
-            <h2>Nenhum pedido encontrado</h2>
-            <p>Você ainda não realizou compras. Venha conhecer nosso catálogo!</p>
-            <Link href={ROUTES.catalog}>
-              <Button size="lg">Explorar Catálogo</Button>
-            </Link>
-          </div>
+          <Card className="mx-auto max-w-lg border-white/5 bg-card/60 text-center shadow-2xl">
+            <CardContent className="space-y-6 p-8 sm:p-12">
+              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary shadow-[0_0_30px_rgba(204,254,44,0.2)]">
+                <Package size={48} weight="fill" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-extrabold text-foreground sm:text-3xl">
+                  Nenhum pedido encontrado
+                </h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Você ainda não realizou compras. Venha conhecer nosso catálogo!
+                </p>
+              </div>
+              <Link href={ROUTES.catalog} className="inline-block">
+                <Button size="lg" className="font-bold">
+                  Explorar Catálogo
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </Container>
       </div>
     );
@@ -45,42 +72,58 @@ export const OrderHistory: React.FC = () => {
   const totalSpent = orders.reduce((sum, order) => sum + order.total, 0);
 
   return (
-    <div className={styles.ordersPage}>
+    <div className="py-12 md:py-16">
       <Container>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Meus Pedidos</h1>
-          <p className={styles.subtitle}>
+        <div className="mb-8">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            Meus Pedidos
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Histórico completo das suas compras de jogos digitais
           </p>
         </div>
 
-        <div className={styles.stats}>
-          <div className={styles.statCard}>
-            <Receipt size={32} weight="fill" />
-            <div className={styles.statInfo}>
-              <span className={styles.statValue}>{orders.length}</span>
-              <span className={styles.statLabel}>Pedidos Realizados</span>
-            </div>
-          </div>
+        {/* Stats Grid */}
+        <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <Card className="border-white/5 bg-card/80">
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Receipt size={28} weight="fill" />
+              </div>
+              <div>
+                <span className="text-2xl font-black text-foreground">{orders.length}</span>
+                <p className="text-xs text-muted-foreground">Pedidos Realizados</p>
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className={styles.statCard}>
-            <Package size={32} weight="fill" />
-            <div className={styles.statInfo}>
-              <span className={styles.statValue}>{totalGames}</span>
-              <span className={styles.statLabel}>Jogos Adquiridos</span>
-            </div>
-          </div>
+          <Card className="border-white/5 bg-card/80">
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Package size={28} weight="fill" />
+              </div>
+              <div>
+                <span className="text-2xl font-black text-foreground">{totalGames}</span>
+                <p className="text-xs text-muted-foreground">Jogos Adquiridos</p>
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className={styles.statCard}>
-            <CreditCard size={32} weight="fill" />
-            <div className={styles.statInfo}>
-              <span className={styles.statValue}>{formatCurrency(totalSpent)}</span>
-              <span className={styles.statLabel}>Total Investido</span>
-            </div>
-          </div>
+          <Card className="border-white/5 bg-card/80">
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <CreditCard size={28} weight="fill" />
+              </div>
+              <div>
+                <span className="text-2xl font-black text-primary">{formatCurrency(totalSpent)}</span>
+                <p className="text-xs text-muted-foreground">Total Investido</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className={styles.ordersList}>
+        {/* Orders List */}
+        <div className="space-y-4">
           {orders.map((order) => (
             <OrderCard key={order.id} order={order} />
           ))}

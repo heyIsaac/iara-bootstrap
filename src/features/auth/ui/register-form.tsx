@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useAuth } from '@/entities/user';
 import { fetchAddressByCep } from '@/features/lookup-cep';
 import { formatCep, formatCpf, formatPhone } from '@/shared/lib/formatters';
-import { Button } from '@/shared/ui';
-import styles from './register-form.module.css';
+import { Button, Card, CardContent } from '@/shared/ui';
 
 const RegisterSchema = Yup.object().shape({
   name: Yup.string()
@@ -42,8 +41,12 @@ const RegisterSchema = Yup.object().shape({
 export const RegisterForm: React.FC = () => {
   const { register } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [errorMessage, setErrorMessage] = useState('');
   const [loadingCep, setLoadingCep] = useState(false);
+
+  const redirect = searchParams?.get('redirect');
+  const redirectUrl = redirect ? `/${redirect}` : '/catalog';
 
   const handleCepBlur = async (
     cep: string,
@@ -73,7 +76,7 @@ export const RegisterForm: React.FC = () => {
     try {
       setErrorMessage('');
       await register(values.email, values.password);
-      router.push('/catalog');
+      router.push(redirectUrl);
     } catch (err: any) {
       setErrorMessage(err.message || 'Erro ao criar conta. Tente novamente.');
     } finally {
@@ -82,312 +85,322 @@ export const RegisterForm: React.FC = () => {
   };
 
   return (
-    <>
-      {errorMessage && <div className={styles.globalError}>{errorMessage}</div>}
-
-      <Formik
-        initialValues={{
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          cpf: '',
-          phone: '',
-          zipCode: '',
-          address: '',
-          number: '',
-          complement: '',
-          neighborhood: '',
-          city: '',
-          state: '',
-        }}
-        validationSchema={RegisterSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ errors, touched, isSubmitting, setFieldValue, values }) => (
-          <Form className={styles.registerForm}>
-            {/* Dados Pessoais */}
-            <div className={styles.formSection}>
-              <h3 className={styles.sectionTitle}>1. Dados Pessoais</h3>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="reg-name">Nome Completo</label>
-                <Field
-                  type="text"
-                  name="name"
-                  id="reg-name"
-                  placeholder="Seu nome completo"
-                  className={`${styles.formInput} ${
-                    errors.name && touched.name ? styles.inputError : ''
-                  }`}
-                />
-                {errors.name && touched.name && (
-                  <span className={styles.errorMessage}>{errors.name}</span>
-                )}
-              </div>
-
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="reg-cpf">CPF</label>
-                  <Field name="cpf">
-                    {({ field }: any) => (
-                      <input
-                        {...field}
-                        type="text"
-                        id="reg-cpf"
-                        placeholder="000.000.000-00"
-                        maxLength={14}
-                        className={`${styles.formInput} ${
-                          errors.cpf && touched.cpf ? styles.inputError : ''
-                        }`}
-                        onChange={(e) => {
-                          const formatted = formatCpf(e.target.value);
-                          setFieldValue('cpf', formatted);
-                        }}
-                      />
-                    )}
-                  </Field>
-                  {errors.cpf && touched.cpf && (
-                    <span className={styles.errorMessage}>{errors.cpf}</span>
-                  )}
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="reg-phone">Telefone</label>
-                  <Field name="phone">
-                    {({ field }: any) => (
-                      <input
-                        {...field}
-                        type="text"
-                        id="reg-phone"
-                        placeholder="(00) 00000-0000"
-                        maxLength={15}
-                        className={`${styles.formInput} ${
-                          errors.phone && touched.phone ? styles.inputError : ''
-                        }`}
-                        onChange={(e) => {
-                          const formatted = formatPhone(e.target.value);
-                          setFieldValue('phone', formatted);
-                        }}
-                      />
-                    )}
-                  </Field>
-                  {errors.phone && touched.phone && (
-                    <span className={styles.errorMessage}>{errors.phone}</span>
-                  )}
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="reg-email">E-mail</label>
-                <Field
-                  type="email"
-                  name="email"
-                  id="reg-email"
-                  placeholder="eve.holt@reqres.in"
-                  className={`${styles.formInput} ${
-                    errors.email && touched.email ? styles.inputError : ''
-                  }`}
-                />
-                {errors.email && touched.email && (
-                  <span className={styles.errorMessage}>{errors.email}</span>
-                )}
-              </div>
-
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="reg-password">Senha</label>
-                  <Field
-                    type="password"
-                    name="password"
-                    id="reg-password"
-                    placeholder="••••••"
-                    className={`${styles.formInput} ${
-                      errors.password && touched.password ? styles.inputError : ''
-                    }`}
-                  />
-                  {errors.password && touched.password && (
-                    <span className={styles.errorMessage}>{errors.password}</span>
-                  )}
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="reg-confirmPassword">Confirmar Senha</label>
-                  <Field
-                    type="password"
-                    name="confirmPassword"
-                    id="reg-confirmPassword"
-                    placeholder="••••••"
-                    className={`${styles.formInput} ${
-                      errors.confirmPassword && touched.confirmPassword
-                        ? styles.inputError
-                        : ''
-                    }`}
-                  />
-                  {errors.confirmPassword && touched.confirmPassword && (
-                    <span className={styles.errorMessage}>
-                      {errors.confirmPassword}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Endereço */}
-            <div className={styles.formSection}>
-              <h3 className={styles.sectionTitle}>2. Endereço</h3>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="reg-zipCode">CEP</label>
-                <Field name="zipCode">
-                  {({ field }: any) => (
-                    <input
-                      {...field}
-                      type="text"
-                      id="reg-zipCode"
-                      placeholder="00000-000"
-                      maxLength={9}
-                      className={`${styles.formInput} ${
-                        errors.zipCode && touched.zipCode ? styles.inputError : ''
-                      }`}
-                      onChange={(e) => {
-                        const formatted = formatCep(e.target.value);
-                        setFieldValue('zipCode', formatted);
-                        if (formatted.replace(/\D/g, '').length === 8) {
-                          handleCepBlur(formatted, setFieldValue);
-                        }
-                      }}
-                      onBlur={() => handleCepBlur(values.zipCode, setFieldValue)}
-                    />
-                  )}
-                </Field>
-                {loadingCep && <span className={styles.textInfo}>Buscando endereço...</span>}
-                {errors.zipCode && touched.zipCode && (
-                  <span className={styles.errorMessage}>{errors.zipCode}</span>
-                )}
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="reg-address">Logradouro</label>
-                <Field
-                  type="text"
-                  name="address"
-                  id="reg-address"
-                  placeholder="Rua, Avenida..."
-                  className={`${styles.formInput} ${
-                    errors.address && touched.address ? styles.inputError : ''
-                  }`}
-                />
-                {errors.address && touched.address && (
-                  <span className={styles.errorMessage}>{errors.address}</span>
-                )}
-              </div>
-
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="reg-number">Número</label>
-                  <Field
-                    type="text"
-                    name="number"
-                    id="reg-number"
-                    placeholder="123"
-                    className={`${styles.formInput} ${
-                      errors.number && touched.number ? styles.inputError : ''
-                    }`}
-                  />
-                  {errors.number && touched.number && (
-                    <span className={styles.errorMessage}>{errors.number}</span>
-                  )}
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="reg-complement">Complemento (opcional)</label>
-                  <Field
-                    type="text"
-                    name="complement"
-                    id="reg-complement"
-                    placeholder="Apto, Bloco..."
-                    className={styles.formInput}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="reg-neighborhood">Bairro</label>
-                <Field
-                  type="text"
-                  name="neighborhood"
-                  id="reg-neighborhood"
-                  placeholder="Centro"
-                  className={`${styles.formInput} ${
-                    errors.neighborhood && touched.neighborhood ? styles.inputError : ''
-                  }`}
-                />
-                {errors.neighborhood && touched.neighborhood && (
-                  <span className={styles.errorMessage}>{errors.neighborhood}</span>
-                )}
-              </div>
-
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="reg-city">Cidade</label>
-                  <Field
-                    type="text"
-                    name="city"
-                    id="reg-city"
-                    placeholder="São Paulo"
-                    className={`${styles.formInput} ${
-                      errors.city && touched.city ? styles.inputError : ''
-                    }`}
-                  />
-                  {errors.city && touched.city && (
-                    <span className={styles.errorMessage}>{errors.city}</span>
-                  )}
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="reg-state">Estado (UF)</label>
-                  <Field
-                    type="text"
-                    name="state"
-                    id="reg-state"
-                    placeholder="SP"
-                    maxLength={2}
-                    style={{ textTransform: 'uppercase' }}
-                    className={`${styles.formInput} ${
-                      errors.state && touched.state ? styles.inputError : ''
-                    }`}
-                  />
-                  {errors.state && touched.state && (
-                    <span className={styles.errorMessage}>{errors.state}</span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              fullWidth
-              size="lg"
-              loading={isSubmitting}
-              disabled={isSubmitting}
-            >
-              Cadastrar
-            </Button>
-          </Form>
+    <Card className="w-full border-white/5 bg-card/90 shadow-2xl backdrop-blur-md">
+      <CardContent className="p-6 sm:p-8">
+        {errorMessage && (
+          <div className="mb-6 rounded-lg border border-destructive/30 bg-destructive/10 p-3.5 text-center text-sm font-medium text-destructive">
+            {errorMessage}
+          </div>
         )}
-      </Formik>
 
-      <div className={styles.authHint}>
-        <p className={styles.hintTitle}>💡 Importante - API de Teste (ReqRes):</p>
-        <p className={styles.hintText}>
-          O ReqRes aceita apenas e-mails pré-cadastrados para registro.
-          <br />
-          <strong>Use:</strong> eve.holt@reqres.in
-          <br />
-          <strong>Senha:</strong> qualquer senha com 6+ caracteres
-        </p>
-      </div>
-    </>
+        <Formik
+          initialValues={{
+            name: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            cpf: '',
+            phone: '',
+            zipCode: '',
+            address: '',
+            number: '',
+            complement: '',
+            neighborhood: '',
+            city: '',
+            state: '',
+          }}
+          validationSchema={RegisterSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ errors, touched, isSubmitting, setFieldValue }) => (
+            <Form className="space-y-6">
+              {/* Informações Pessoais */}
+              <div className="space-y-4">
+                <h3 className="text-base font-semibold text-primary">Informações Pessoais</h3>
+                
+                <div className="space-y-1.5">
+                  <label htmlFor="reg-name" className="text-sm font-medium text-muted-foreground">Nome Completo</label>
+                  <Field
+                    type="text"
+                    name="name"
+                    id="reg-name"
+                    placeholder="Seu nome completo"
+                    className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                      errors.name && touched.name
+                        ? 'border-destructive focus:ring-destructive'
+                        : 'border-input focus:border-primary focus:ring-primary'
+                    }`}
+                  />
+                  {errors.name && touched.name && (
+                    <span className="text-xs font-medium text-destructive">{errors.name}</span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label htmlFor="reg-cpf" className="text-sm font-medium text-muted-foreground">CPF</label>
+                    <Field name="cpf">
+                      {({ field }: any) => (
+                        <input
+                          {...field}
+                          type="text"
+                          id="reg-cpf"
+                          placeholder="000.000.000-00"
+                          maxLength={14}
+                          onChange={(e) => setFieldValue('cpf', formatCpf(e.target.value))}
+                          className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                            errors.cpf && touched.cpf
+                              ? 'border-destructive focus:ring-destructive'
+                              : 'border-input focus:border-primary focus:ring-primary'
+                          }`}
+                        />
+                      )}
+                    </Field>
+                    {errors.cpf && touched.cpf && (
+                      <span className="text-xs font-medium text-destructive">{errors.cpf}</span>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="reg-phone" className="text-sm font-medium text-muted-foreground">Telefone</label>
+                    <Field name="phone">
+                      {({ field }: any) => (
+                        <input
+                          {...field}
+                          type="text"
+                          id="reg-phone"
+                          placeholder="(00) 00000-0000"
+                          maxLength={15}
+                          onChange={(e) => setFieldValue('phone', formatPhone(e.target.value))}
+                          className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                            errors.phone && touched.phone
+                              ? 'border-destructive focus:ring-destructive'
+                              : 'border-input focus:border-primary focus:ring-primary'
+                          }`}
+                        />
+                      )}
+                    </Field>
+                    {errors.phone && touched.phone && (
+                      <span className="text-xs font-medium text-destructive">{errors.phone}</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="reg-email" className="text-sm font-medium text-muted-foreground">E-mail</label>
+                  <Field
+                    type="email"
+                    name="email"
+                    id="reg-email"
+                    placeholder="seu@email.com"
+                    className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                      errors.email && touched.email
+                        ? 'border-destructive focus:ring-destructive'
+                        : 'border-input focus:border-primary focus:ring-primary'
+                    }`}
+                  />
+                  {errors.email && touched.email && (
+                    <span className="text-xs font-medium text-destructive">{errors.email}</span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label htmlFor="reg-password" className="text-sm font-medium text-muted-foreground">Senha</label>
+                    <Field
+                      type="password"
+                      name="password"
+                      id="reg-password"
+                      placeholder="••••••"
+                      className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                        errors.password && touched.password
+                          ? 'border-destructive focus:ring-destructive'
+                          : 'border-input focus:border-primary focus:ring-primary'
+                      }`}
+                    />
+                    {errors.password && touched.password && (
+                      <span className="text-xs font-medium text-destructive">{errors.password}</span>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="reg-confirmPassword" className="text-sm font-medium text-muted-foreground">Confirmar Senha</label>
+                    <Field
+                      type="password"
+                      name="confirmPassword"
+                      id="reg-confirmPassword"
+                      placeholder="••••••"
+                      className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                        errors.confirmPassword && touched.confirmPassword
+                          ? 'border-destructive focus:ring-destructive'
+                          : 'border-input focus:border-primary focus:ring-primary'
+                      }`}
+                    />
+                    {errors.confirmPassword && touched.confirmPassword && (
+                      <span className="text-xs font-medium text-destructive">{errors.confirmPassword}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Endereço */}
+              <div className="space-y-4 border-t border-white/5 pt-4">
+                <h3 className="text-base font-semibold text-primary">Endereço</h3>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="reg-zipCode" className="text-sm font-medium text-muted-foreground">CEP</label>
+                    {loadingCep && <span className="text-xs text-primary animate-pulse">Buscando endereço...</span>}
+                  </div>
+                  <Field name="zipCode">
+                    {({ field }: any) => (
+                      <input
+                        {...field}
+                        type="text"
+                        id="reg-zipCode"
+                        placeholder="00000-000"
+                        maxLength={9}
+                        onChange={(e) => setFieldValue('zipCode', formatCep(e.target.value))}
+                        onBlur={(e) => {
+                          field.onBlur(e);
+                          handleCepBlur(e.target.value, setFieldValue);
+                        }}
+                        className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                          errors.zipCode && touched.zipCode
+                            ? 'border-destructive focus:ring-destructive'
+                            : 'border-input focus:border-primary focus:ring-primary'
+                        }`}
+                      />
+                    )}
+                  </Field>
+                  {errors.zipCode && touched.zipCode && (
+                    <span className="text-xs font-medium text-destructive">{errors.zipCode}</span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label htmlFor="reg-address" className="text-sm font-medium text-muted-foreground">Rua/Avenida</label>
+                    <Field
+                      type="text"
+                      name="address"
+                      id="reg-address"
+                      placeholder="Rua..."
+                      className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                        errors.address && touched.address
+                          ? 'border-destructive focus:ring-destructive'
+                          : 'border-input focus:border-primary focus:ring-primary'
+                      }`}
+                    />
+                    {errors.address && touched.address && (
+                      <span className="text-xs font-medium text-destructive">{errors.address}</span>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="reg-number" className="text-sm font-medium text-muted-foreground">Número</label>
+                    <Field
+                      type="text"
+                      name="number"
+                      id="reg-number"
+                      placeholder="123"
+                      className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                        errors.number && touched.number
+                          ? 'border-destructive focus:ring-destructive'
+                          : 'border-input focus:border-primary focus:ring-primary'
+                      }`}
+                    />
+                    {errors.number && touched.number && (
+                      <span className="text-xs font-medium text-destructive">{errors.number}</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label htmlFor="reg-complement" className="text-sm font-medium text-muted-foreground">Complemento (opcional)</label>
+                    <Field
+                      type="text"
+                      name="complement"
+                      id="reg-complement"
+                      placeholder="Apto 101, Bloco B"
+                      className="h-11 w-full rounded-lg border border-input bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="reg-neighborhood" className="text-sm font-medium text-muted-foreground">Bairro</label>
+                    <Field
+                      type="text"
+                      name="neighborhood"
+                      id="reg-neighborhood"
+                      placeholder="Bairro"
+                      className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                        errors.neighborhood && touched.neighborhood
+                          ? 'border-destructive focus:ring-destructive'
+                          : 'border-input focus:border-primary focus:ring-primary'
+                      }`}
+                    />
+                    {errors.neighborhood && touched.neighborhood && (
+                      <span className="text-xs font-medium text-destructive">{errors.neighborhood}</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label htmlFor="reg-city" className="text-sm font-medium text-muted-foreground">Cidade</label>
+                    <Field
+                      type="text"
+                      name="city"
+                      id="reg-city"
+                      placeholder="Cidade"
+                      className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                        errors.city && touched.city
+                          ? 'border-destructive focus:ring-destructive'
+                          : 'border-input focus:border-primary focus:ring-primary'
+                      }`}
+                    />
+                    {errors.city && touched.city && (
+                      <span className="text-xs font-medium text-destructive">{errors.city}</span>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="reg-state" className="text-sm font-medium text-muted-foreground">Estado</label>
+                    <Field
+                      type="text"
+                      name="state"
+                      id="reg-state"
+                      placeholder="UF"
+                      maxLength={2}
+                      className={`h-11 w-full rounded-lg border bg-card px-3.5 text-sm uppercase text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 ${
+                        errors.state && touched.state
+                          ? 'border-destructive focus:ring-destructive'
+                          : 'border-input focus:border-primary focus:ring-primary'
+                      }`}
+                    />
+                    {errors.state && touched.state && (
+                      <span className="text-xs font-medium text-destructive">{errors.state}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                fullWidth
+                size="lg"
+                loading={isSubmitting}
+                disabled={isSubmitting}
+                className="font-bold"
+              >
+                Cadastrar
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </CardContent>
+    </Card>
   );
 };

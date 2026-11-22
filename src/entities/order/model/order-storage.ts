@@ -32,6 +32,7 @@ export const saveOrderToHistory = (order: Order): void => {
     }
     localStorage.setItem(ORDERS_HISTORY_KEY, JSON.stringify(history));
     localStorage.setItem(LAST_ORDER_KEY, JSON.stringify(order));
+    window.dispatchEvent(new Event('orderHistoryUpdated'));
   } catch (err) {
     console.error('Erro ao salvar pedido:', err);
   }

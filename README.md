@@ -74,9 +74,8 @@ src/
 └── shared/                     # Camada Shared: Código agnóstico reutilizável
     ├── api/                    # Cliente HTTP (Axios) com interceptors
     ├── config/                 # Variáveis de ambiente e constantes de rotas
-    ├── lib/                    # Formatadores (moeda, data, CPF, CEP, cartão) e áudio
-    ├── styles/                 # Design tokens (tokens.css) e resets (globals.css)
-    └── ui/                     # Componentes base (Button, Input, Container, Spinner)
+    ├── lib/                    # Formatadores (moeda, data, CPF, CEP, cartão), áudio e utilitário cn (clsx + twMerge)
+    └── ui/                     # Componentes shadcn/ui (Button, Card, Input, Badge, Container, Spinner, Label, Separator)
 ```
 
 ---
@@ -85,8 +84,10 @@ src/
 
 - **Next.js 14 (App Router)** - Framework React para produção
 - **React 18 + TypeScript** - UI declarativa e tipagem estática rigorosa
-- **CSS Modules** - Estilização escopada com Design Tokens
-- **Phosphor Icons** - Biblioteca moderna de ícones vetoriais
+- **Tailwind CSS + PostCSS** - Estilização moderna e utilitária com design tokens e variáveis HSL
+- **shadcn/ui** - Primitives acessíveis e customizáveis (Button, Card, Input, Badge, Label, Separator, Container, Spinner)
+- **Radix UI** - Primitivos acessíveis (`@radix-ui/react-slot`, `@radix-ui/react-label`, `@radix-ui/react-separator`)
+- **Phosphor Icons & Lucide Icons** - Bibliotecas modernas de ícones vetoriais
 - **Axios** - Cliente HTTP com interceptors de autenticação
 - **Formik + Yup** - Gerenciamento e validação de formulários
 - **qrcode** - Geração dinâmica de QR Code para pagamento PIX

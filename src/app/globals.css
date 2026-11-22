@@ -1,1 +1,83 @@
-@import '@/shared/styles/globals.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 224 25% 6%;         /* #0b0d12 dark gamer background */
+    --foreground: 220 27% 93%;        /* #e6eaf2 crisp light text */
+
+    --card: 222 28% 11%;              /* #141924 surface */
+    --card-foreground: 220 27% 93%;
+
+    --popover: 222 28% 11%;
+    --popover-foreground: 220 27% 93%;
+
+    --primary: 74 98% 58%;            /* #ccfe2c Iara Games electric neon green */
+    --primary-foreground: 224 25% 6%; /* dark text on primary button */
+
+    --secondary: 222 20% 18%;         /* #252b3b subtle dark gray */
+    --secondary-foreground: 220 27% 93%;
+
+    --muted: 222 20% 16%;
+    --muted-foreground: 218 14% 65%;  /* #9aa3b2 */
+
+    --accent: 74 98% 58%;
+    --accent-foreground: 224 25% 6%;
+
+    --destructive: 349 100% 59%;      /* #ff2d55 */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 20% 18%;
+    --input: 222 20% 18%;
+    --ring: 74 98% 58%;
+
+    --radius: 0.75rem;
+
+    /* Iara Brand Custom Tokens */
+    --color-primary: #ccfe2c;
+    --color-bg: #0b0d12;
+    --color-surface: #141924;
+    --color-text: #e6eaf2;
+    --color-muted: #9aa3b2;
+    --color-yellow: #fee62c;
+    --color-blue: #2c7afe;
+    --color-error: #ff2d55;
+    --color-success: #34c759;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #ccfe2c rgba(255, 255, 255, 0.06);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccfe2c;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b8e528;
+}
